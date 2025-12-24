@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from api.routes import router
+from api.routes import router, router_upload
 
 def create_app() -> FastAPI:
     app = FastAPI(
@@ -9,6 +9,7 @@ def create_app() -> FastAPI:
     )
 
     app.include_router(router)
+    app.include_router(router_upload)
 
     @app.get("/health")
     async def health_check():
