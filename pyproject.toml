@@ -1,16 +1,28 @@
 [project]
 name = "agent"
 version = "0.0.1"
-description = "Starter template for making a new agent LangGraph."
+description = "An AI-powered question answering system for internal enterprise documents."
 authors = [
-    { name = "William Fu-Hinthorn", email = "13333726+hinthornw@users.noreply.github.com" },
+    { name = "DatNT38", email = "datnt38@fpt.com" },
 ]
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.10"
 dependencies = [
-    "langgraph>=1.0.0",
-    "python-dotenv>=1.0.1",
+    "langchain",
+    "langgraph",
+    "langgraph-sdk",
+    "langgraph-checkpoint-sqlite",
+    "langsmith>=0.2.0",
+    "langchain-community",
+    "langchain-core",
+    "langchain-openai",
+    "langchain-text-splitters",
+    "python-dotenv",
+    "lxml",
+    "scikit-learn",
+    "pandas",
+    "pyarrow",
 ]
 
 

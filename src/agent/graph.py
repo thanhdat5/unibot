@@ -1,54 +1,67 @@
-"""LangGraph single-node graph template.
+import nest_asyncio
+import operator
+from langchain_core.documents import Document
+from langchain_core.messages import HumanMessage, AnyMessage, get_buffer_string
+from langchain_openai import ChatOpenAI
+from langgraph.graph import StateGraph, START, END
+from typing import List
+from typing_extensions import TypedDict, Annotated
+from agent.utils import get_vector_db_retriever, RAG_PROMPT
+from langsmith import traceable
 
-Returns a predefined response. Replace logic and configuration as needed.
-"""
+nest_asyncio.apply()
 
-from __future__ import annotations
+retriever = get_vector_db_retriever()
+llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0)
 
-from dataclasses import dataclass
-from typing import Any, Dict
+# Define Graph state
+class GraphState(TypedDict):
+    question: str
+    messages: Annotated[List[AnyMessage], operator.add]
+    documents: List[Document]
 
-from langgraph.graph import StateGraph
-from langgraph.runtime import Runtime
-from typing_extensions import TypedDict
-
-
-class Context(TypedDict):
-    """Context parameters for the agent.
-
-    Set these when creating assistants OR when invoking the graph.
-    See: https://langchain-ai.github.io/langgraph/cloud/how-tos/configuration_cloud/
+@traceable(run_type="chain")
+def retrieve_documents(state: GraphState):
+    """Retrieve relevant documents from vectorstore based on conversation context.
+    
+    Fetches documents relevant to the user's question combined with message history.
     """
+    messages = state.get("messages", [])
+    question = state["question"]
+    documents = retriever.invoke(f"{get_buffer_string(messages)} {question}")
+    return {"documents": documents}
 
-    my_configurable_param: str
-
-
-@dataclass
-class State:
-    """Input state for the agent.
-
-    Defines the initial structure of incoming data.
-    See: https://langchain-ai.github.io/langgraph/concepts/low_level/#state
+@traceable(run_type="chain")
+def generate_response(state: GraphState):
+    """Generate a response using retrieved documents and conversation context.
+    
+    Formats context and conversation history, then calls LLM to generate an answer.
     """
+    question = state["question"]
+    messages = state["messages"]
+    documents = state["documents"]
+    formatted_docs = "\n\n".join(doc.page_content for doc in documents)
+    
+    rag_prompt_formatted = RAG_PROMPT.format(context=formatted_docs, conversation=messages, question=question)
+    generation = call_openai(rag_prompt_formatted)
+    return {"documents": documents, "messages": [HumanMessage(question), generation]}
 
-    changeme: str = "example"
 
-
-async def call_model(state: State, runtime: Runtime[Context]) -> Dict[str, Any]:
-    """Process input and returns output.
-
-    Can use runtime context to alter behavior.
+@traceable(run_type="llm")
+def call_openai(prompt: str):
+    """Call OpenAI LLM with the formatted RAG prompt.
+    
+    Returns the chat completion output from OpenAI.
     """
-    return {
-        "changeme": "output from call_model. "
-        f"Configured with {(runtime.context or {}).get('my_configurable_param')}"
-    }
+    return llm.invoke([HumanMessage(content=prompt)])
 
 
-# Define the graph
-graph = (
-    StateGraph(State, context_schema=Context)
-    .add_node(call_model)
-    .add_edge("__start__", "call_model")
-    .compile(name="New Graph")
-)
+# Define Graph
+graph_builder = StateGraph(GraphState)
+graph_builder.add_node("retrieve_documents", retrieve_documents)
+graph_builder.add_node("generate_response", generate_response)
+graph_builder.add_edge(START, "retrieve_documents")
+graph_builder.add_edge("retrieve_documents", "generate_response")
+graph_builder.add_edge("generate_response", END)
+
+graph = graph_builder.compile()
