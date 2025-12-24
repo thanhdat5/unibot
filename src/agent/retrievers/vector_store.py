@@ -5,7 +5,9 @@ import tempfile
 from pathlib import Path
 
 from functools import partial
-from langchain_community.document_loaders import DirectoryLoader, TextLoader
+from docx import Document
+from langchain_core.documents import Document as LangchainDocument
+from langchain_community.document_loaders import DirectoryLoader, TextLoader, PyPDFLoader
 from langchain_community.vectorstores import SKLearnVectorStore
 from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -20,10 +22,41 @@ from agent.config.settings import (
 )
 
 
+def load_docx_files(docs_path: Path) -> list:
+    """Load all DOCX files from the given path.
+    
+    Args:
+        docs_path: Path to the documents directory
+        
+    Returns:
+        List of LangchainDocument objects
+    """
+    documents = []
+    try:
+        docx_paths = list(docs_path.glob("**/*.docx"))
+        for docx_path in docx_paths:
+            try:
+                doc = Document(str(docx_path))
+                text = "\n".join([para.text for para in doc.paragraphs])
+                if text.strip():
+                    documents.append(
+                        LangchainDocument(
+                            page_content=text,
+                            metadata={"source": str(docx_path)}
+                        )
+                    )
+            except Exception as e:
+                print(f"Warning: Could not load DOCX file {docx_path}: {e}")
+    except Exception as e:
+        print(f"Warning: Error processing DOCX files: {e}")
+    
+    return documents
+
+
 def get_vector_db_retriever():
     """Initialize or load vector database retriever.
     
-    Creates a new vector store from local documentation .txt files if it doesn't exist,
+    Creates a new vector store from local documentation files (.txt, .pdf, .docx) if it doesn't exist,
     otherwise loads the existing vector store from disk.
     
     Returns:
@@ -47,16 +80,37 @@ def get_vector_db_retriever():
     if not docs_path.exists():
         raise ValueError(f"Documentation directory not found: {docs_path}")
     
-    # Use TextLoader with UTF-8 encoding to handle Vietnamese text
+    documents = []
+    
+    # Load .txt files
     text_loader_utf8 = partial(TextLoader, encoding="utf-8")
-    directory_loader = DirectoryLoader(
+    text_loader = DirectoryLoader(
         path=str(docs_path),
         glob="**/*.txt",
         loader_cls=text_loader_utf8,
         show_progress=True,
         use_multithreading=True
     )
-    documents = directory_loader.load()
+    documents.extend(text_loader.load())
+    
+    # Load .pdf files
+    pdf_loader = DirectoryLoader(
+        path=str(docs_path),
+        glob="**/*.pdf",
+        loader_cls=PyPDFLoader,
+        show_progress=True,
+        use_multithreading=True
+    )
+    try:
+        documents.extend(pdf_loader.load())
+    except Exception as e:
+        print(f"Warning: Could not load PDF files: {e}")
+    
+    # Load .docx files
+    documents.extend(load_docx_files(docs_path))
+    
+    if not documents:
+        raise ValueError(f"No documents found in {docs_path}")
 
     text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
         chunk_size=DOCUMENT_CHUNK_SIZE,

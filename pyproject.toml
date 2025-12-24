@@ -23,7 +23,10 @@ dependencies = [
     "scikit-learn",
     "pandas",
     "pyarrow",
-    "fastapi"
+    "fastapi",
+    "python-multipart",
+    "pypdf",
+    "python-docx"
 ]
 
 
