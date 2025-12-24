@@ -1,5 +1,5 @@
 [project]
-name = "agent"
+name = "unibot"
 version = "0.0.1"
 description = "An AI-powered question answering system for internal enterprise documents."
 authors = [
