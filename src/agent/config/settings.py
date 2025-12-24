@@ -9,7 +9,7 @@ VECTOR_STORE_PERSIST_DIR = "union.parquet"
 VECTOR_STORE_SERIALIZER = "parquet"
 
 # Document Loading Configuration
-SITEMAP_URL = "https://docs.smith.langchain.com/sitemap.xml"
+DOCS_DIR = "src/docs"
 DOCUMENT_CHUNK_SIZE = 500
 DOCUMENT_CHUNK_OVERLAP = 0
 

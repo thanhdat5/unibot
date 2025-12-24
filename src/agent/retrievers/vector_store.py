@@ -2,8 +2,10 @@
 
 import os
 import tempfile
+from pathlib import Path
 
-from langchain_community.document_loaders.sitemap import SitemapLoader
+from functools import partial
+from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain_community.vectorstores import SKLearnVectorStore
 from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -11,7 +13,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from agent.config.settings import (
     VECTOR_STORE_PERSIST_DIR,
     VECTOR_STORE_SERIALIZER,
-    SITEMAP_URL,
+    DOCS_DIR,
     DOCUMENT_CHUNK_SIZE,
     DOCUMENT_CHUNK_OVERLAP,
     RETRIEVER_LAMBDA_MULT,
@@ -21,7 +23,7 @@ from agent.config.settings import (
 def get_vector_db_retriever():
     """Initialize or load vector database retriever.
     
-    Creates a new vector store from LangSmith documentation sitemap if it doesn't exist,
+    Creates a new vector store from local documentation .txt files if it doesn't exist,
     otherwise loads the existing vector store from disk.
     
     Returns:
@@ -39,12 +41,22 @@ def get_vector_db_retriever():
         )
         return vectorstore.as_retriever(lambda_mult=RETRIEVER_LAMBDA_MULT)
 
-    # Otherwise, index documents and create new vector store
-    sitemap_loader = SitemapLoader(
-        web_path=SITEMAP_URL,
-        continue_on_failure=True
+    # Otherwise, index documents from local directory and create new vector store
+    # Resolve path relative to the project root
+    docs_path = Path(__file__).parent.parent.parent.parent / DOCS_DIR
+    if not docs_path.exists():
+        raise ValueError(f"Documentation directory not found: {docs_path}")
+    
+    # Use TextLoader with UTF-8 encoding to handle Vietnamese text
+    text_loader_utf8 = partial(TextLoader, encoding="utf-8")
+    directory_loader = DirectoryLoader(
+        path=str(docs_path),
+        glob="**/*.txt",
+        loader_cls=text_loader_utf8,
+        show_progress=True,
+        use_multithreading=True
     )
-    documents = sitemap_loader.load()
+    documents = directory_loader.load()
 
     text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
         chunk_size=DOCUMENT_CHUNK_SIZE,
