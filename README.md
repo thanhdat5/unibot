@@ -1,6 +1,6 @@
-# UniBot - HipLab Chat Assistant
+# UniBot - Unibot Chat Assistant
 
-A production-ready RAG (Retrieval Augmented Generation) chatbot powered by LangGraph, FastAPI, and modern web technologies. UniBot specializes in answering questions about HipLab internal policies, regulations, and employee benefits through an intelligent streaming chat interface.
+A production-ready RAG (Retrieval Augmented Generation) chatbot powered by LangGraph, FastAPI, and modern web technologies. UniBot specializes in answering questions about your company internal policies, regulations, and employee benefits through an intelligent streaming chat interface.
 
 ## 🚀 Key Features
 
@@ -335,7 +335,7 @@ const API_BASE_URL = 'https://api.example.com';
 ### Features
 
 - **Real-time Chat Interface**: Displays messages with streaming tokens
-- **Quick Questions**: Pre-configured questions about HipLab policies
+- **Quick Questions**: Pre-configured questions about your company policies
 - **Auto-scroll**: Automatically scrolls to latest messages
 - **Error Handling**: Displays user-friendly error messages
 - **Responsive Design**: Works on desktop, tablet, and mobile devices
