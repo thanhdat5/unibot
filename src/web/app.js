@@ -92,6 +92,7 @@ async function streamChatResponse(question, botMessageElement) {
                 if (line.startsWith('data: ')) {
                     try {
                         const data = JSON.parse(line.slice(6));
+                        console.log('Received:', data);
                         
                         if (data.done) {
                             // Streaming complete
@@ -99,6 +100,9 @@ async function streamChatResponse(question, botMessageElement) {
                         } else if (data.error) {
                             contentElement.innerHTML = `❌ Error: ${data.error}`;
                             break;
+                        } else if (data.documents && data.documents.length > 0) {
+                            // Display retrieved documents
+                            displayRetrievedDocuments(data.documents);
                         } else if (data.token) {
                             // Clear loading indicator on first token
                             if (isFirstToken) {
@@ -231,4 +235,38 @@ function askQuestion(question) {
     setTimeout(() => {
         chatForm.dispatchEvent(new Event('submit'));
     }, 100);
+}
+
+/**
+ * Display retrieved documents
+ */
+function displayRetrievedDocuments(documents) {
+    const docsContainer = document.getElementById('retrievedDocs');
+    const docsList = document.getElementById('docsList');
+    
+    if (!documents || documents.length === 0) {
+        if (docsContainer) docsContainer.style.display = 'none';
+        return;
+    }
+    
+    if (!docsContainer || !docsList) {
+        console.warn('Documents container or list not found in DOM');
+        return;
+    }
+    
+    docsList.innerHTML = documents
+        .map(doc => `
+            <div class="doc-item">
+                <span class="doc-name">${doc.filename}</span>
+                <a href="${API_BASE_URL}/upload/documents/${encodeURIComponent(doc.filename)}" 
+                   class="doc-download-link" 
+                   download>
+                    ⬇ Download
+                </a>
+            </div>
+        `)
+        .join('');
+    
+    docsContainer.style.display = 'block';
+    chatMessages.scrollTop = chatMessages.scrollHeight;
 }

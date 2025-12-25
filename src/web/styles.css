@@ -306,3 +306,73 @@ body {
 .chat-messages::-webkit-scrollbar-thumb:hover {
     background: #764ba2;
 }
+
+/* Retrieved Documents */
+.retrieved-docs {
+    margin: 16px 0;
+    padding: 12px;
+    background: #f0f8ff;
+    border-left: 4px solid #667eea;
+    border-radius: 8px;
+}
+
+.docs-header {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.docs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.doc-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.doc-item:hover {
+    border-color: #667eea;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+}
+
+.doc-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.doc-download-link {
+    padding: 6px 12px;
+    margin-left: 8px;
+    background: #667eea;
+    color: white;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.doc-download-link:hover {
+    background: #764ba2;
+    transform: translateY(-1px);
+}
+
+.doc-download-link:active {
+    transform: translateY(0);
+}
