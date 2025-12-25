@@ -32,10 +32,6 @@ unibot/
 │   │   ├── styles.css            # Styling & animations
 │   │   └── app.js                # Client logic & streaming handler
 │   └── docs/                       # Internal documentation & policies
-├── evals/                          # Evaluation suite
-│   ├── dataset.py                # HipLab policy Q&A dataset
-│   ├── evaluation.py             # Evaluation metrics
-│   └── run_evaluation.py         # Evaluation runner
 ├── tests/                          # Test suite
 │   ├── unit_tests/               # Unit tests
 │   └── integration_tests/        # Integration tests
@@ -53,7 +49,6 @@ unibot/
 - **src/api/**: FastAPI server with streaming chat endpoints and CORS middleware
 - **src/web/**: Self-contained static web application with real-time streaming support
 - **src/docs/**: Internal policy documents used as RAG knowledge base
-- **evals/**: Evaluation dataset and metrics for testing RAG quality
 
 ## 📋 Prerequisites
 
@@ -351,32 +346,6 @@ const API_BASE_URL = 'https://api.example.com';
 - Firefox 88+
 - Safari 14+
 
-## 📊 Running Evaluations
-
-Evaluate the RAG system's performance on the HipLab policy dataset.
-
-### Command
-
-```bash
-python evals/run_evaluation.py
-```
-
-### What It Does
-
-- Loads the evaluation dataset from `evals/dataset.py`
-- Runs queries against the RAG pipeline
-- Computes evaluation metrics (similarity, relevance, etc.)
-- Outputs results and statistics
-
-### Dataset
-
-The evaluation dataset (`evals/dataset.py`) contains 20+ Q&A pairs covering:
-- Company information
-- Working hours and leave policies
-- Benefits and compensation
-- Security and confidentiality
-- Misconduct and penalties
-- Code of conduct
 
 ## 🛠️ Development Workflow
 

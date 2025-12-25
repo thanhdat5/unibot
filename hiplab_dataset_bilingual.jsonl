@@ -1,0 +1,59 @@
+{"pair_id": 1, "lang": "vi", "input": "HipLab là công ty hoạt động trong lĩnh vực gì?", "output": "HipLab là công ty TNHH phần mềm, cung cấp các giải pháp và dịch vụ công nghệ thông tin cho khách hàng trong và ngoài nước."}
+{"pair_id": 1, "lang": "en", "input": "What industry does HipLab operate in?", "output": "HipLab is a software company that provides information technology solutions and services to both domestic and international clients."}
+
+{"pair_id": 2, "lang": "vi", "input": "Mô hình hoạt động của HipLab tương tự công ty nào?", "output": "HipLab hoạt động theo mô hình tương tự FPT Software."}
+{"pair_id": 2, "lang": "en", "input": "Which company has a business model similar to HipLab?", "output": "HipLab operates under a business model similar to FPT Software."}
+
+{"pair_id": 3, "lang": "vi", "input": "Thời gian làm việc chính thức của HipLab là như thế nào?", "output": "Thời gian làm việc từ thứ 2 đến thứ 6, từ 8h30 đến 17h30, nghỉ trưa từ 12h đến 13h."}
+{"pair_id": 3, "lang": "en", "input": "What are the official working hours at HipLab?", "output": "The official working hours are from Monday to Friday, 8:30 AM to 5:30 PM, with a lunch break from 12:00 PM to 1:00 PM."}
+
+{"pair_id": 4, "lang": "vi", "input": "Nhân viên HipLab có bao nhiêu ngày nghỉ phép năm?", "output": "Nhân viên HipLab có 12 ngày nghỉ phép năm và có thể tăng theo thâm niên."}
+{"pair_id": 4, "lang": "en", "input": "How many annual leave days do HipLab employees have?", "output": "HipLab employees are entitled to 12 days of annual leave, which may increase based on seniority."}
+
+{"pair_id": 5, "lang": "vi", "input": "HipLab có cho phép nghỉ không lương không?", "output": "HipLab cho phép nghỉ không lương nhưng cần có sự phê duyệt của quản lý trực tiếp."}
+{"pair_id": 5, "lang": "en", "input": "Does HipLab allow unpaid leave?", "output": "HipLab allows unpaid leave, subject to approval from the direct manager."}
+
+{"pair_id": 6, "lang": "vi", "input": "Quy định nghỉ thai sản cho lao động nữ tại HipLab là gì?", "output": "Lao động nữ được nghỉ thai sản 6 tháng theo quy định của pháp luật."}
+{"pair_id": 6, "lang": "en", "input": "What is the maternity leave policy for female employees at HipLab?", "output": "Female employees are entitled to six months of maternity leave in accordance with labor law regulations."}
+
+{"pair_id": 7, "lang": "vi", "input": "Lao động nam được hưởng quyền lợi gì khi vợ sinh con?", "output": "Lao động nam được nghỉ khi vợ sinh con theo quy định của nhà nước."}
+{"pair_id": 7, "lang": "en", "input": "What benefits do male employees receive when their spouse gives birth?", "output": "Male employees are entitled to paternity leave as stipulated by government regulations."}
+
+{"pair_id": 8, "lang": "vi", "input": "Những quyền lợi chính mà nhân viên HipLab được hưởng là gì?", "output": "Nhân viên được hưởng lương tháng 13, thưởng dự án, bảo hiểm xã hội, bảo hiểm y tế, bảo hiểm thất nghiệp, đào tạo nội bộ và các hoạt động team building."}
+{"pair_id": 8, "lang": "en", "input": "What are the main benefits provided to HipLab employees?", "output": "Employees receive a 13th-month salary, project bonuses, social insurance, health insurance, unemployment insurance, internal training programs, and team-building activities."}
+
+{"pair_id": 9, "lang": "vi", "input": "Nhân viên HipLab có được chia sẻ mã nguồn ra bên ngoài không?", "output": "Nhân viên không được phép chia sẻ mã nguồn và tài liệu nội bộ ra bên ngoài."}
+{"pair_id": 9, "lang": "en", "input": "Are HipLab employees allowed to share source code externally?", "output": "Employees are not allowed to share source code or internal documents outside the company."}
+
+{"pair_id": 10, "lang": "vi", "input": "Những thông tin nào được xem là thông tin cần bảo mật?", "output": "Mã nguồn, tài liệu nội bộ và dữ liệu khách hàng được xem là thông tin cần bảo mật."}
+{"pair_id": 10, "lang": "en", "input": "What information is considered confidential?", "output": "Source code, internal documents, and customer data are considered confidential information."}
+
+{"pair_id": 11, "lang": "vi", "input": "Nghỉ làm không phép sẽ bị xử lý như thế nào?", "output": "Nghỉ làm không phép sẽ bị trừ lương theo ngày công và có thể bị xử lý kỷ luật."}
+{"pair_id": 11, "lang": "en", "input": "How is unauthorized absence handled?", "output": "Unauthorized absence may result in salary deductions based on working days and disciplinary actions."}
+
+{"pair_id": 12, "lang": "vi", "input": "Đi làm muộn hoặc về sớm nhiều lần có thể bị xử lý ra sao?", "output": "Đi làm muộn hoặc về sớm nhiều lần có thể bị nhắc nhở hoặc trừ thưởng."}
+{"pair_id": 12, "lang": "en", "input": "What happens if an employee frequently arrives late or leaves early?", "output": "Frequent late arrivals or early departures may result in warnings or bonus deductions."}
+
+{"pair_id": 13, "lang": "vi", "input": "Vi phạm bảo mật thông tin có thể dẫn đến hậu quả gì?", "output": "Vi phạm bảo mật có thể bị xử lý kỷ luật, phạt tiền hoặc chấm dứt hợp đồng."}
+{"pair_id": 13, "lang": "en", "input": "What are the consequences of violating confidentiality policies?", "output": "Violations of confidentiality may lead to disciplinary action, financial penalties, or contract termination."}
+
+{"pair_id": 14, "lang": "vi", "input": "HipLab có chính sách thưởng cổ phiếu cho nhân viên không?", "output": "Tài liệu nội bộ không đề cập đến chính sách thưởng cổ phiếu cho nhân viên."}
+{"pair_id": 14, "lang": "en", "input": "Does HipLab offer stock bonuses to employees?", "output": "The internal documentation does not mention any employee stock bonus policy."}
+
+{"pair_id": 15, "lang": "vi", "input": "HipLab có cho phép làm việc 100% remote không?", "output": "Tài liệu chỉ đề cập làm việc từ xa theo quy định từng dự án, không nêu làm việc 100% remote."}
+{"pair_id": 15, "lang": "en", "input": "Does HipLab allow 100% remote work?", "output": "The documentation only mentions remote work based on project requirements and does not specify full-time remote work."}
+
+{"pair_id": 16, "lang": "vi", "input": "Nhân viên có thể sử dụng tài nguyên công ty cho mục đích cá nhân không?", "output": "Nhân viên không được sử dụng tài nguyên công ty cho mục đích cá nhân trái phép."}
+{"pair_id": 16, "lang": "en", "input": "Can employees use company resources for personal purposes?", "output": "Employees are not allowed to use company resources for unauthorized personal purposes."}
+
+{"pair_id": 17, "lang": "vi", "input": "Hậu quả của các hành vi gian lận hoặc phá hoại tài sản công ty là gì?", "output": "Hành vi gian lận, phá hoại tài sản sẽ bị xử lý bồi thường thiệt hại và áp dụng mức kỷ luật cao nhất."}
+{"pair_id": 17, "lang": "en", "input": "What are the consequences of fraud or damage to company property?", "output": "Fraudulent actions or damage to company property will result in compensation for damages and the highest level of disciplinary action."}
+
+{"pair_id": 18, "lang": "vi", "input": "HipLab yêu cầu nhân viên điều gì khi làm việc với đồng nghiệp và khách hàng?", "output": "HipLab yêu cầu nhân viên phải tôn trọng đồng nghiệp và khách hàng, làm việc chuyên nghiệp, đúng cam kết, và không phân biệt đối xử."}
+{"pair_id": 18, "lang": "en", "input": "What does HipLab expect from employees when working with colleagues and clients?", "output": "HipLab expects employees to respect colleagues and clients, work professionally, honor commitments, and avoid discrimination."}
+
+{"pair_id": 19, "lang": "vi", "input": "Quy định bảo mật thông tin của HipLab bao gồm những nội dung nào?", "output": "Quy định bảo mật cấm chia sẻ mã nguồn và tài liệu nội bộ ra ngoài, không sử dụng tài nguyên công ty cho mục đích cá nhân trái phép, vi phạm bảo mật có thể bị xử lý kỷ luật hoặc bồi thường thiệt hại."}
+{"pair_id": 19, "lang": "en", "input": "What does HipLab's information security policy include?", "output": "The security policy prohibits sharing source code and internal documents externally, forbids unauthorized personal use of company resources, and states that violations may result in disciplinary action or compensation for damages."}
+
+{"pair_id": 20, "lang": "vi", "input": "Những hình thức nghỉ nào được quy định trong chính sách nhân sự của HipLab?", "output": "HipLab quy định các hình thức nghỉ bao gồm: nghỉ phép năm (12 ngày/năm, tăng theo thâm niên), nghỉ ốm theo Luật Lao động, nghỉ việc riêng/hiếu hỉ (1-3 ngày), nghỉ thai sản (6 tháng cho lao động nữ), và nghỉ không lương (cần phê duyệt)."}
+{"pair_id": 20, "lang": "en", "input": "What types of leave are defined in HipLab's HR policy?", "output": "HipLab defines several types of leave, including annual leave (12 days per year, increasing with seniority), sick leave in accordance with labor law, personal or compassionate leave (1–3 days), maternity leave (six months for female employees), and unpaid leave subject to approval."}
