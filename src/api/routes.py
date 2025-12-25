@@ -1,6 +1,8 @@
 import os
+import json
 from pathlib import Path
 from fastapi import APIRouter, HTTPException, UploadFile, File
+from fastapi.responses import StreamingResponse
 from agent.graph import graph
 from agent.schemas.state import GraphState
 from api.schemas import ChatRequest, ChatResponse, FileUploadResponse
@@ -31,6 +33,46 @@ async def chat(req: ChatRequest):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/stream")
+async def chat_stream(req: ChatRequest):
+    """Streaming chat endpoint using Server-Sent Events with token-by-token streaming"""
+    
+    async def generate():
+        try:
+            initial_state: GraphState = {
+                "question": req.question,
+                "messages": [],
+                "documents": [],
+            }
+            
+            # Stream events from the graph
+            async for event in graph.astream(initial_state, stream_mode="updates"):
+                # Extract the generate_response output
+                if "generate_response" in event:
+                    message = event["generate_response"]["messages"][-1]
+                    content = message.content
+                    
+                    # Stream token-by-token (character by character)
+                    for token in content:
+                        yield f"data: {json.dumps({'token': token})}\n\n"
+            
+            # Send completion signal
+            yield "data: {\"done\": true}\n\n"
+            
+        except Exception as e:
+            yield f"data: {json.dumps({'error': str(e)})}\n\n"
+    
+    return StreamingResponse(
+        generate(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+            "Connection": "keep-alive"
+        }
+    )
 
 
 router_upload = APIRouter(prefix="/upload", tags=["Upload"])

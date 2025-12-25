@@ -1,61 +1,365 @@
-# New LangGraph Project
+# UniBot - HipLab Chat Assistant
 
-[![CI](https://github.com/langchain-ai/new-langgraph-project/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/langchain-ai/new-langgraph-project/actions/workflows/unit-tests.yml)
-[![Integration Tests](https://github.com/langchain-ai/new-langgraph-project/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/langchain-ai/new-langgraph-project/actions/workflows/integration-tests.yml)
+A production-ready RAG (Retrieval Augmented Generation) chatbot powered by LangGraph, FastAPI, and modern web technologies. UniBot specializes in answering questions about HipLab internal policies, regulations, and employee benefits through an intelligent streaming chat interface.
 
-This template demonstrates a simple application implemented using [LangGraph](https://github.com/langchain-ai/langgraph), designed for showing how to get started with [LangGraph Server](https://langchain-ai.github.io/langgraph/concepts/langgraph_server/#langgraph-server) and using [LangGraph Studio](https://langchain-ai.github.io/langgraph/concepts/langgraph_studio/), a visual debugging IDE.
+## 🚀 Key Features
 
-<div align="center">
-  <img src="./static/studio_ui.png" alt="Graph view in LangGraph studio UI" width="75%" />
-</div>
+- **LangGraph-Powered RAG Pipeline**: Advanced agent orchestration with retrieval and generation nodes
+- **Real-time Streaming**: Token-by-token response streaming using Server-Sent Events (SSE)
+- **Vector Database Integration**: Efficient document retrieval using vector embeddings
+- **Modern Web Interface**: Responsive HTML/CSS/JavaScript frontend with real-time chat UI
+- **Evaluation Framework**: Built-in dataset and evaluation utilities for RAG quality assessment
+- **CORS-Enabled API**: Cross-origin support for seamless frontend-backend integration
 
-The core logic defined in `src/agent/graph.py`, showcases an single-step application that responds with a fixed string and the configuration provided.
+## 📁 Folder Structure
 
-You can extend this graph to orchestrate more complex agentic workflows that can be visualized and debugged in LangGraph Studio.
+```
+unibot/
+├── src/
+│   ├── agent/                      # LangGraph agent & RAG logic
+│   │   ├── graph.py               # Main LangGraph definition
+│   │   ├── chains/                # LangChain components (RAG chain)
+│   │   ├── config/                # Configuration (LLM, prompts, settings)
+│   │   ├── nodes/                 # Graph nodes (retrieval, generation)
+│   │   ├── retrievers/            # Vector store & retrieval logic
+│   │   └── schemas/               # Data models (GraphState)
+│   ├── api/                        # FastAPI REST API
+│   │   ├── main.py               # API application & CORS setup
+│   │   ├── routes.py             # Chat endpoints (/chat, /chat/stream)
+│   │   └── schemas.py            # Request/response models
+│   ├── web/                        # Frontend (HTML/CSS/JS)
+│   │   ├── index.html            # Chat UI
+│   │   ├── styles.css            # Styling & animations
+│   │   └── app.js                # Client logic & streaming handler
+│   └── docs/                       # Internal documentation & policies
+├── evals/                          # Evaluation suite
+│   ├── dataset.py                # HipLab policy Q&A dataset
+│   ├── evaluation.py             # Evaluation metrics
+│   └── run_evaluation.py         # Evaluation runner
+├── tests/                          # Test suite
+│   ├── unit_tests/               # Unit tests
+│   └── integration_tests/        # Integration tests
+├── pyproject.toml                  # Project metadata & dependencies
+├── Makefile                        # Build & development commands
+├── langgraph.json                  # LangGraph configuration
+├── LANGSMITH_SETUP.md             # LangSmith integration guide
+├── CODE_REVIEW.md                 # Code review guidelines
+└── LICENSE
+```
 
-## Getting Started
+### Key Folder Responsibilities
 
-1. Install dependencies, along with the [LangGraph CLI](https://langchain-ai.github.io/langgraph/concepts/langgraph_cli/), which will be used to run the server.
+- **src/agent/**: Contains the LangGraph workflow definition, RAG chain, and document retrieval logic
+- **src/api/**: FastAPI server with streaming chat endpoints and CORS middleware
+- **src/web/**: Self-contained static web application with real-time streaming support
+- **src/docs/**: Internal policy documents used as RAG knowledge base
+- **evals/**: Evaluation dataset and metrics for testing RAG quality
+
+## 📋 Prerequisites
+
+- **Python**: 3.9 or higher
+- **pip**: Package manager (comes with Python)
+- **Modern Web Browser**: Chrome, Firefox, Safari, or Edge (for frontend)
+
+## 🔧 Installation Guide
+
+### 1. Clone the Repository
 
 ```bash
-cd path/to/your/app
-pip install -e . "langgraph-cli[inmem]"
+git clone <repository-url>
+cd unibot
 ```
 
-2. (Optional) Customize the code and project as needed. Create a `.env` file if you need to use secrets.
+### 2. Create Virtual Environment
+
+**On macOS/Linux:**
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+**On Windows:**
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+### 3. Install Dependencies
 
 ```bash
-cp .env.example .env
+pip install -e .
 ```
 
-If you want to enable LangSmith tracing, add your LangSmith API key to the `.env` file.
+This installs all project dependencies defined in `pyproject.toml`.
 
-```text
-# .env
-LANGSMITH_API_KEY=lsv2...
+### 4. Environment Configuration
+
+Create a `.env` file in the project root for API keys and configuration:
+
+```env
+# LLM Configuration
+OPENAI_API_KEY=your-api-key-here
+LLM_MODEL_NAME=gpt-4
+LLM_TEMPERATURE=0.7
+
+# LangSmith (Optional)
+LANGSMITH_API_KEY=your-langsmith-key
+LANGSMITH_PROJECT=unibot
+
+# Vector Store (Optional)
+VECTOR_STORE_URL=http://localhost:6333
 ```
 
-3. Start the LangGraph Server.
+## 🧠 Running LangGraph (Development Mode)
 
-```shell
+LangGraph Dev Server is useful for local development, debugging, and testing the graph flows interactively.
+
+### Command
+
+```bash
 langgraph dev
 ```
 
-For more information on getting started with LangGraph Server, [see here](https://langchain-ai.github.io/langgraph/tutorials/langgraph-platform/local-server/).
+### What It Does
 
-## How to customize
+- Launches a local LangGraph development server
+- Provides interactive debugging interface
+- Allows step-by-step execution of graph nodes
+- Visualizes agent workflow in real-time
 
-1. **Define runtime context**: Modify the `Context` class in the `graph.py` file to expose the arguments you want to configure per assistant. For example, in a chatbot application you may want to define a dynamic system prompt or LLM to use. For more information on runtime context in LangGraph, [see here](https://langchain-ai.github.io/langgraph/agents/context/?h=context#static-runtime-context).
+### Default Access
 
-2. **Extend the graph**: The core logic of the application is defined in [graph.py](./src/agent/graph.py). You can modify this file to add new nodes, edges, or change the flow of information.
+- **LangGraph Studio**: http://localhost:8000/
 
-## Development
+### Usage
 
-While iterating on your graph in LangGraph Studio, you can edit past state and rerun your app from previous states to debug specific nodes. Local changes will be automatically applied via hot reload.
+Use LangGraph Studio to:
+- Visualize the RAG pipeline
+- Test individual nodes
+- Debug graph execution
+- Monitor state transitions
 
-Follow-up requests extend the same thread. You can create an entirely new thread, clearing previous history, using the `+` button in the top right.
+## 🔌 Running the API (FastAPI)
 
-For more advanced features and examples, refer to the [LangGraph documentation](https://langchain-ai.github.io/langgraph/). These resources can help you adapt this template for your specific use case and build more sophisticated conversational agents.
+The FastAPI server exposes REST endpoints for chat and file upload operations.
 
-LangGraph Studio also integrates with [LangSmith](https://smith.langchain.com/) for more in-depth tracing and collaboration with teammates, allowing you to analyze and optimize your chatbot's performance.
+### Command
 
+```bash
+uvicorn src.api.main:app --reload
+```
+
+**Note**: Working directory should be the project root (`unibot/`)
+
+### What It Does
+
+- Starts the FastAPI application server
+- Enables auto-reload on code changes (development mode)
+- Sets up CORS middleware for cross-origin requests
+- Initializes LangGraph agent and vector store retriever
+
+### Default Configuration
+
+- **Host**: `127.0.0.1`
+- **Port**: `8000`
+- **API Base URL**: `http://localhost:8000`
+
+### Available Endpoints
+
+#### 1. **Chat Endpoint (Non-Streaming)**
+
+```
+POST /chat
+Content-Type: application/json
+
+{
+  "question": "What are the working hours at HipLab?"
+}
+```
+
+**Response:**
+```json
+{
+  "answer": "Working hours are Monday to Friday, 8:30 AM to 5:30 PM, with lunch break from 12:00 PM to 1:00 PM."
+}
+```
+
+#### 2. **Chat Stream Endpoint (Token-by-Token Streaming)**
+
+```
+POST /chat/stream
+Content-Type: application/json
+
+{
+  "question": "What is HipLab's leave policy?"
+}
+```
+
+**Response** (Server-Sent Events):
+```
+data: {"token":"Employees"}
+data: {"token":" have"}
+data: {"token":" 12"}
+...
+data: {"done":true}
+```
+
+#### 3. **File Upload Endpoint**
+
+```
+POST /upload/file
+Content-Type: multipart/form-data
+
+file: <binary-file>
+```
+
+Supported formats: `.txt`, `.pdf`, `.docx` (max 50MB)
+
+#### 4. **Health Check**
+
+```
+GET /health
+```
+
+### API Documentation
+
+Interactive API documentation available at:
+- **Swagger UI**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
+
+## 🌐 Running the Web Project
+
+The web frontend is a static HTML/CSS/JavaScript application that communicates with the FastAPI server.
+
+### Quick Start
+
+#### Option 1: Direct File Opening
+
+```bash
+# Navigate to the web folder
+cd src/web
+
+# Open index.html directly in your browser
+# On macOS:
+open index.html
+
+# On Windows:
+start index.html
+
+# On Linux:
+xdg-open index.html
+```
+
+#### Option 2: Python HTTP Server
+
+```bash
+# From project root
+python -m http.server 8080 --directory src/web
+```
+
+Then open: http://localhost:8080
+
+#### Option 3: VS Code Live Server Extension
+
+1. Install VS Code extension "Live Server"
+2. Right-click `src/web/index.html`
+3. Select "Open with Live Server"
+
+### Configuration
+
+Before running the frontend, ensure the API URL is correctly configured in `src/web/app.js`:
+
+```javascript
+const API_BASE_URL = 'http://localhost:8000';
+```
+
+**For production**, update this to your deployed API URL:
+
+```javascript
+const API_BASE_URL = 'https://api.example.com';
+```
+
+### Features
+
+- **Real-time Chat Interface**: Displays messages with streaming tokens
+- **Quick Questions**: Pre-configured questions about HipLab policies
+- **Auto-scroll**: Automatically scrolls to latest messages
+- **Error Handling**: Displays user-friendly error messages
+- **Responsive Design**: Works on desktop, tablet, and mobile devices
+
+### Browser Compatibility
+
+- Chrome/Edge 90+
+- Firefox 88+
+- Safari 14+
+
+## 📊 Running Evaluations
+
+Evaluate the RAG system's performance on the HipLab policy dataset.
+
+### Command
+
+```bash
+python evals/run_evaluation.py
+```
+
+### What It Does
+
+- Loads the evaluation dataset from `evals/dataset.py`
+- Runs queries against the RAG pipeline
+- Computes evaluation metrics (similarity, relevance, etc.)
+- Outputs results and statistics
+
+### Dataset
+
+The evaluation dataset (`evals/dataset.py`) contains 20+ Q&A pairs covering:
+- Company information
+- Working hours and leave policies
+- Benefits and compensation
+- Security and confidentiality
+- Misconduct and penalties
+- Code of conduct
+
+## 🛠️ Development Workflow
+
+### Useful Makefile Commands
+
+Check `Makefile` for common development tasks:
+
+```bash
+make help        # Display available commands
+make install     # Install dependencies
+make dev         # Start development servers
+make test        # Run test suite
+make lint        # Check code quality
+```
+
+### Project Structure Tips
+
+- **Add new graph nodes**: Create files in `src/agent/nodes/`
+- **Update prompts**: Modify `src/agent/config/prompts.py`
+- **Adjust LLM settings**: Edit `src/agent/config/settings.py`
+- **Add new API routes**: Extend `src/api/routes.py`
+- **Update frontend**: Modify files in `src/web/`
+
+## 📚 Additional Resources
+
+- [LangGraph Documentation](https://langchain-ai.github.io/langgraph/)
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [LangChain Documentation](https://python.langchain.com/)
+- [LangSmith Setup Guide](./LANGSMITH_SETUP.md)
+- [Code Review Guidelines](./CODE_REVIEW.md)
+
+## 📝 License
+
+This project is licensed under the terms specified in the [LICENSE](./LICENSE) file.
+
+## 🤝 Contributing
+
+For contribution guidelines, please see [CODE_REVIEW.md](./CODE_REVIEW.md).
+
+---
+
+**Last Updated**: December 25, 2025
+
+For questions or issues, please open an issue in the repository or contact the development team.

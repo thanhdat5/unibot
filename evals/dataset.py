@@ -61,6 +61,26 @@ HIPLAB_DATASET = [
     {
         "question": "HipLab có cho phép làm việc 100% remote không?",
         "expected_answer": "Tài liệu chỉ đề cập làm việc từ xa theo quy định từng dự án, không nêu làm việc 100% remote."
+    },
+    {
+        "question": "Nhân viên có thể sử dụng tài nguyên công ty cho mục đích cá nhân không?",
+        "expected_answer": "Nhân viên không được sử dụng tài nguyên công ty cho mục đích cá nhân trái phép."
+    },
+    {
+        "question": "Hậu quả của các hành vi gian lận hoặc phá hoại tài sản công ty là gì?",
+        "expected_answer": "Hành vi gian lận, phá hoại tài sản sẽ bị xử lý bồi thường thiệt hại và áp dụng mức kỷ luật cao nhất."
+    },
+    {
+        "question": "HipLab yêu cầu nhân viên điều gì khi làm việc với đồng nghiệp và khách hàng?",
+        "expected_answer": "HipLab yêu cầu nhân viên phải tôn trọng đồng nghiệp và khách hàng, làm việc chuyên nghiệp, đúng cam kết, và không phân biệt đối xử."
+    },
+    {
+        "question": "Quy định bảo mật thông tin của HipLab bao gồm những nội dung nào?",
+        "expected_answer": "Quy định bảo mật cấm chia sẻ mã nguồn và tài liệu nội bộ ra ngoài, không sử dụng tài nguyên công ty cho mục đích cá nhân trái phép, vi phạm bảo mật có thể bị xử lý kỷ luật hoặc bồi thường thiệt hại."
+    },
+    {
+        "question": "Những hình thức nghỉ nào được quy định trong chính sách nhân sự của HipLab?",
+        "expected_answer": "HipLab quy định các hình thức nghỉ bao gồm: nghỉ phép năm (12 ngày/năm, tăng theo thâm niên), nghỉ ốm theo Luật Lao động, nghỉ việc riêng/hiếu hỉ (1-3 ngày), nghỉ thai sản (6 tháng cho lao động nữ), và nghỉ không lương (cần phê duyệt)."
     }
 ]
 

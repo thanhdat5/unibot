@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HipLab Chat Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="chat-wrapper">
+            <!-- Header -->
+            <div class="chat-header">
+                <div class="header-content">
+                    <h1>HipLab Chat Assistant</h1>
+                    <p>Hỏi về chính sách và quy định nội bộ HipLab</p>
+                </div>
+            </div>
+
+            <!-- Chat Messages Area -->
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot-message">
+                    <div class="message-content">
+                        <p>👋 Xin chào! Tôi là trợ lý ảo của HipLab. Bạn có thể hỏi tôi về bất kỳ chính sách hoặc quy định nội bộ nào. Hãy bắt đầu bằng cách nhập câu hỏi của bạn!</p>
+                    </div>
+                    <span class="message-time">Bây giờ</span>
+                </div>
+            </div>
+
+            <!-- Chat Input Area -->
+            <div class="chat-input-area">
+                <form id="chatForm" class="input-form">
+                    <input 
+                        type="text" 
+                        id="messageInput" 
+                        class="message-input" 
+                        placeholder="Nhập câu hỏi của bạn..."
+                        autocomplete="off"
+                    >
+                    <button type="submit" class="send-btn" id="sendBtn">
+                        <span>Gửi</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </form>
+                <div class="input-hint">💡 Mẹo: Hãy hỏi về giờ làm, nghỉ phép, lương thưởng, bảo mật...</div>
+            </div>
+        </div>
+
+        <!-- Info Panel -->
+        <div class="info-panel">
+            <div class="info-card">
+                <h3>Những câu hỏi thường gặp:</h3>
+                <ul>
+                    <li><button class="quick-question" onclick="askQuestion('HipLab là công ty hoạt động trong lĩnh vực gì?')">Về HipLab</button></li>
+                    <li><button class="quick-question" onclick="askQuestion('Thời gian làm việc chính thức của HipLab là như thế nào?')">Giờ làm việc</button></li>
+                    <li><button class="quick-question" onclick="askQuestion('Nhân viên HipLab có bao nhiêu ngày nghỉ phép năm?')">Nghỉ phép</button></li>
+                    <li><button class="quick-question" onclick="askQuestion('Những quyền lợi chính mà nhân viên HipLab được hưởng là gì?')">Quyền lợi & phúc lợi</button></li>
+                    <li><button class="quick-question" onclick="askQuestion('Quy định bảo mật thông tin của HipLab bao gồm những nội dung nào?')">Bảo mật thông tin</button></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
