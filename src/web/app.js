@@ -19,6 +19,9 @@ document.addEventListener('DOMContentLoaded', () => {
             handleSendMessage(e);
         }
     });
+    
+    // Load all documents on page load
+    loadAllDocuments();
 });
 
 /**
@@ -269,4 +272,51 @@ function displayRetrievedDocuments(documents) {
     
     docsContainer.style.display = 'block';
     chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+/**
+ * Load all documents from server
+ */
+async function loadAllDocuments() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/upload/documents`);
+        const data = await response.json();
+        
+        const documentsList = document.getElementById('documentsList');
+        
+        if (!data.documents || data.documents.length === 0) {
+            documentsList.innerHTML = '<div class="no-docs">Không có tài liệu nào</div>';
+            return;
+        }
+        
+        documentsList.innerHTML = data.documents
+            .map(doc => {
+                // Format file size
+                let fileSize = '';
+                if (doc.file_size) {
+                    const bytes = doc.file_size;
+                    const kb = bytes / 1024;
+                    fileSize = kb > 1024 ? `${(kb / 1024).toFixed(2)} MB` : `${kb.toFixed(2)} KB`;
+                }
+                
+                return `
+                    <div class="document-item">
+                        <div class="doc-info">
+                            <div class="doc-name-text">${doc.filename}</div>
+                            <div class="doc-size">${fileSize}</div>
+                        </div>
+                        <a href="${API_BASE_URL}/upload/documents/${encodeURIComponent(doc.filename)}" 
+                           class="doc-btn" 
+                           title="Download ${doc.filename}"
+                           download>
+                        </a>
+                    </div>
+                `;
+            })
+            .join('');
+    } catch (error) {
+        console.error('Error loading documents:', error);
+        const documentsList = document.getElementById('documentsList');
+        documentsList.innerHTML = '<div class="no-docs">Lỗi tải tài liệu</div>';
+    }
 }

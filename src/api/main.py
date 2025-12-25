@@ -1,6 +1,18 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 from api.routes import router, router_upload
+
+
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    """Add security headers to all responses"""
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+        # Set Referrer-Policy header
+        response.headers["Referrer-Policy"] = "no-referrer-when-downgrade"
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        return response
+
 
 def create_app() -> FastAPI:
     app = FastAPI(
@@ -9,13 +21,17 @@ def create_app() -> FastAPI:
         description="RAG chatbot API powered by LangGraph"
     )
 
+    # Add security headers middleware
+    app.add_middleware(SecurityHeadersMiddleware)
+
     # Add CORS middleware
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],  # Allow all origins, or specify: ["http://localhost:8080", "http://localhost:3000"]
+        allow_origins=["*"],  # Allow all origins
         allow_credentials=True,
-        allow_methods=["*"],  # Allow all methods including OPTIONS
+        allow_methods=["*"],  # Allow all methods including OPTIONS, GET, POST, DELETE
         allow_headers=["*"],
+        expose_headers=["*"],
     )
 
     app.include_router(router)
