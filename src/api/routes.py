@@ -6,6 +6,8 @@ from fastapi.responses import StreamingResponse, FileResponse
 from agent.graph import graph
 from agent.schemas.state import GraphState
 from api.schemas import ChatRequest, ChatResponse, FileUploadResponse, DocumentReference
+from langchain_openai import ChatOpenAI
+from agent.config import LLM_MODEL_NAME, LLM_TEMPERATURE
 
 router = APIRouter(prefix="/chat", tags=["Chat"])
 
@@ -60,41 +62,44 @@ async def chat_stream(req: ChatRequest):
     
     async def generate():
         try:
+            from agent.nodes.generation import call_openai_stream
+            from agent.config.prompts import RAG_PROMPT
+            
+            # Initialize LLM
+            llm = ChatOpenAI(model_name=LLM_MODEL_NAME, temperature=LLM_TEMPERATURE)
+            
             initial_state: GraphState = {
                 "question": req.question,
                 "messages": [],
                 "documents": [],
             }
             
-            final_documents = None
+            # First, run the full graph to get documents and prepare for streaming
+            final_state = await graph.ainvoke(initial_state)
             
-            # Stream events from the graph
-            async for event in graph.astream(initial_state, stream_mode="updates"):
-                print(f"[STREAM EVENT] Keys: {event.keys()}")  # Debug
-                
-                # Extract the generate_response output
-                if "generate_response" in event:
-                    message = event["generate_response"]["messages"][-1]
-                    content = message.content
-                    
-                    # Stream token-by-token (character by character)
-                    for token in content:
-                        yield f"data: {json.dumps({'token': token})}\n\n"
-                
-                # Store final documents state from any node that updates it
-                for node_name, node_data in event.items():
-                    if isinstance(node_data, dict) and "documents" in node_data:
-                        final_documents = node_data["documents"]
-                        print(f"[DOCUMENTS] Found {len(final_documents)} docs from {node_name}")  # Debug
+            # Get documents from retrieval
+            documents = final_state.get("documents", [])
             
-            print(f"[FINAL STATE] Documents: {final_documents}")  # Debug
+            # Format documents for context
+            formatted_docs = "\n\n".join(doc.page_content for doc in documents)
             
-            # Send documents list BEFORE completion signal
-            if final_documents:
+            # Prepare the prompt
+            rag_prompt_formatted = RAG_PROMPT.format(
+                context=formatted_docs,
+                conversation=initial_state["messages"],
+                question=req.question
+            )
+            
+            # Stream the response token by token
+            async for token in call_openai_stream(rag_prompt_formatted, llm):
+                yield f"data: {json.dumps({'token': token})}\n\n"
+            
+            # Send documents list AFTER response
+            if documents:
                 retrieved_docs = []
                 seen_sources = set()
                 
-                for doc in final_documents:
+                for doc in documents:
                     source = doc.metadata.get("source", "")
                     if source and source not in seen_sources:
                         seen_sources.add(source)
@@ -105,11 +110,10 @@ async def chat_stream(req: ChatRequest):
                             "page": doc.metadata.get("page", None)
                         })
                 
-                print(f"[SENDING] {len(retrieved_docs)} documents to client")  # Debug
                 if retrieved_docs:
                     yield f"data: {json.dumps({'documents': retrieved_docs})}\n\n"
             
-            # Send completion signal AFTER documents
+            # Send completion signal
             yield "data: {\"done\": true}\n\n"
             
         except Exception as e:

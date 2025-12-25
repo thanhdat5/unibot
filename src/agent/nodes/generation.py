@@ -36,7 +36,7 @@ def generate_response(state: GraphState, llm) -> dict:
 
 
 @traceable(run_type="llm")
-def call_openai(prompt: str, llm) -> str:
+def call_openai(prompt: str, llm):
     """Call OpenAI LLM with the formatted RAG prompt.
     
     Returns the chat completion output from OpenAI.
@@ -49,3 +49,20 @@ def call_openai(prompt: str, llm) -> str:
         Generated response from the LLM
     """
     return llm.invoke([HumanMessage(content=prompt)])
+
+
+async def call_openai_stream(prompt: str, llm):
+    """Stream response from OpenAI LLM.
+    
+    Yields tokens/chunks from the LLM response.
+    
+    Args:
+        prompt: Formatted prompt for the LLM
+        llm: Language model instance
+        
+    Yields:
+        Token/chunk strings from the LLM
+    """
+    async for chunk in llm.astream([HumanMessage(content=prompt)]):
+        if hasattr(chunk, 'content') and chunk.content:
+            yield chunk.content
