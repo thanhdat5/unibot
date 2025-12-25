@@ -22,6 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Load all documents on page load
     loadAllDocuments();
+    
+    // Setup file upload
+    const fileInput = document.getElementById('fileInput');
+    fileInput.addEventListener('change', (e) => handleFileUpload(e.target.files));
 });
 
 /**
@@ -272,6 +276,75 @@ function displayRetrievedDocuments(documents) {
     
     docsContainer.style.display = 'block';
     chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+/**
+ * Open file upload dialog
+ */
+function openFileUpload() {
+    document.getElementById('fileInput').click();
+}
+
+/**
+ * Handle file upload
+ */
+async function handleFileUpload(files) {
+    if (!files || files.length === 0) return;
+    
+    const file = files[0];
+    const uploadMessage = document.getElementById('uploadMessage');
+    
+    // Check file type
+    const allowedTypes = ['.txt', '.pdf', '.docx'];
+    const fileExt = '.' + file.name.split('.').pop().toLowerCase();
+    
+    if (!allowedTypes.includes(fileExt)) {
+        uploadMessage.style.display = 'block';
+        uploadMessage.className = 'upload-message error';
+        uploadMessage.textContent = '❌ Định dạng file không hỗ trợ. Chỉ hỗ trợ: .txt, .pdf, .docx';
+        setTimeout(() => uploadMessage.style.display = 'none', 3000);
+        return;
+    }
+    
+    // Show uploading message
+    uploadMessage.style.display = 'block';
+    uploadMessage.className = 'upload-message info';
+    uploadMessage.textContent = `📤 Đang upload: ${file.name}...`;
+    
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        const response = await fetch(`${API_BASE_URL}/upload/file`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            uploadMessage.className = 'upload-message success';
+            uploadMessage.textContent = `✅ Upload thành công: ${file.name}`;
+            
+            // Reload documents list after successful upload
+            setTimeout(() => {
+                loadAllDocuments();
+                uploadMessage.style.display = 'none';
+            }, 1500);
+        } else {
+            uploadMessage.className = 'upload-message error';
+            uploadMessage.textContent = `❌ Lỗi: ${data.detail || 'Upload thất bại'}`;
+            setTimeout(() => uploadMessage.style.display = 'none', 3000);
+        }
+    } catch (error) {
+        uploadMessage.className = 'upload-message error';
+        uploadMessage.textContent = `❌ Lỗi kết nối: ${error.message}`;
+        console.error('Upload error:', error);
+        setTimeout(() => uploadMessage.style.display = 'none', 3000);
+    }
+    
+    // Reset file input
+    document.getElementById('fileInput').value = '';
 }
 
 /**

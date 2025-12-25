@@ -64,7 +64,9 @@
         </div>
 
         <div class="info-card docs-card">
-          <h3>📄 Tài liệu nội bộ <button type="button">Upload</button></h3>
+          <h3>📄 Tài liệu nội bộ <button type="button" onclick="openFileUpload()">Upload</button></h3>
+          <input type="file" id="fileInput" class="hidden-file-input" accept=".txt,.pdf,.docx" />
+          <div id="uploadMessage" class="upload-message" style="display: none;"></div>
           <div id="documentsList" class="documents-list">
             <div class="loading-docs">Đang tải...</div>
           </div>
