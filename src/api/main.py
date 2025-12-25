@@ -1,3 +1,6 @@
+# MUST import langsmith config first to enable tracing
+import agent.config.langsmith_config  # noqa: F401
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware

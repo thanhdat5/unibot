@@ -1,4 +1,8 @@
 import nest_asyncio
+
+# MUST be imported first to enable LangSmith tracing
+import agent.config.langsmith_config  # noqa: F401
+
 from functools import partial
 
 from langchain_openai import ChatOpenAI

@@ -56,8 +56,8 @@ def load_docx_files(docs_path: Path) -> list:
 def get_vector_db_retriever():
     """Initialize or load vector database retriever.
     
-    Creates a new vector store from local documentation files (.txt, .pdf, .docx) if it doesn't exist,
-    otherwise loads the existing vector store from disk.
+    Creates a new vector store from local documentation files (.txt, .pdf, .docx).
+    Always rebuilds the vector store from current documents to ensure fresh data.
     
     Returns:
         A retriever instance from SKLearnVectorStore
@@ -65,14 +65,14 @@ def get_vector_db_retriever():
     persist_path = os.path.join(tempfile.gettempdir(), VECTOR_STORE_PERSIST_DIR)
     embd = OpenAIEmbeddings()
 
-    # If vector store exists, then load it
+    # Clear old cache on startup to ensure fresh data from current documents
     if os.path.exists(persist_path):
-        vectorstore = SKLearnVectorStore(
-            embedding=embd,
-            persist_path=persist_path,
-            serializer=VECTOR_STORE_SERIALIZER
-        )
-        return vectorstore.as_retriever(lambda_mult=RETRIEVER_LAMBDA_MULT)
+        try:
+            import shutil
+            shutil.rmtree(persist_path)
+            print(f"[INFO] Cleared old vector store cache: {persist_path}")
+        except Exception as e:
+            print(f"[WARNING] Could not clear vector store cache: {e}")
 
     # Otherwise, index documents from local directory and create new vector store
     # Resolve path relative to the project root

@@ -51,6 +51,7 @@ def call_openai(prompt: str, llm):
     return llm.invoke([HumanMessage(content=prompt)])
 
 
+@traceable(run_type="llm")
 async def call_openai_stream(prompt: str, llm):
     """Stream response from OpenAI LLM.
     

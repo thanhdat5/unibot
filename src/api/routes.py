@@ -1,6 +1,10 @@
 import os
 import json
 from pathlib import Path
+
+# MUST be imported first to enable LangSmith tracing
+import agent.config.langsmith_config  # noqa: F401
+
 from fastapi import APIRouter, HTTPException, UploadFile, File
 from fastapi.responses import StreamingResponse, FileResponse
 from agent.graph import graph
@@ -8,6 +12,8 @@ from agent.schemas.state import GraphState
 from api.schemas import ChatRequest, ChatResponse, FileUploadResponse, DocumentReference
 from langchain_openai import ChatOpenAI
 from agent.config import LLM_MODEL_NAME, LLM_TEMPERATURE
+from langsmith import trace
+from langsmith.run_trees import RunTree
 
 router = APIRouter(prefix="/chat", tags=["Chat"])
 
@@ -61,19 +67,27 @@ async def chat_stream(req: ChatRequest):
     """Streaming chat endpoint using Server-Sent Events with token-by-token streaming"""
     
     async def generate():
+        from agent.nodes.generation import call_openai_stream
+        from agent.config.prompts import RAG_PROMPT
+        from langsmith.run_trees import RunTree
+        
+        # Initialize LLM
+        llm = ChatOpenAI(model_name=LLM_MODEL_NAME, temperature=LLM_TEMPERATURE)
+        
+        initial_state: GraphState = {
+            "question": req.question,
+            "messages": [],
+            "documents": [],
+        }
+        
+        # Create a run tree to track this operation
+        run_tree = RunTree(
+            name="chat_stream",
+            run_type="chain",
+            inputs={"question": req.question},
+        )
+        
         try:
-            from agent.nodes.generation import call_openai_stream
-            from agent.config.prompts import RAG_PROMPT
-            
-            # Initialize LLM
-            llm = ChatOpenAI(model_name=LLM_MODEL_NAME, temperature=LLM_TEMPERATURE)
-            
-            initial_state: GraphState = {
-                "question": req.question,
-                "messages": [],
-                "documents": [],
-            }
-            
             # First, run the full graph to get documents and prepare for streaming
             final_state = await graph.ainvoke(initial_state)
             
@@ -90,8 +104,12 @@ async def chat_stream(req: ChatRequest):
                 question=req.question
             )
             
+            # Collect full response for tracing
+            full_response = ""
+            
             # Stream the response token by token
             async for token in call_openai_stream(rag_prompt_formatted, llm):
+                full_response += token
                 yield f"data: {json.dumps({'token': token})}\n\n"
             
             # Send documents list AFTER response
@@ -116,8 +134,17 @@ async def chat_stream(req: ChatRequest):
             # Send completion signal
             yield "data: {\"done\": true}\n\n"
             
+            # Update run tree with outputs
+            run_tree.end(outputs={
+                "response": full_response,
+                "documents": retrieved_docs if documents else []
+            })
+            run_tree.post()
+            
         except Exception as e:
             print(f"[ERROR] {str(e)}")  # Debug
+            run_tree.end(error=str(e))
+            run_tree.post()
             yield f"data: {json.dumps({'error': str(e)})}\n\n"
     
     return StreamingResponse(
