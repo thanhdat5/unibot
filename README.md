@@ -213,9 +213,67 @@ Content-Type: multipart/form-data
 file: <binary-file>
 ```
 
+**Response:**
+```json
+{
+  "filename": "document.txt",
+  "file_path": "/path/to/document.txt",
+  "file_size": 1024,
+  "message": "File 'document.txt' uploaded successfully"
+}
+```
+
 Supported formats: `.txt`, `.pdf`, `.docx` (max 50MB)
 
-#### 4. **Health Check**
+#### 4. **List All Documents**
+
+```
+GET /upload/documents
+```
+
+**Response:**
+```json
+{
+  "documents": [
+    {
+      "filename": "policy.txt",
+      "file_size": 2048,
+      "created_at": 1703498400.5,
+      "modified_at": 1703498400.5
+    },
+    {
+      "filename": "handbook.pdf",
+      "file_size": 5120,
+      "created_at": 1703498400.5,
+      "modified_at": 1703498400.5
+    }
+  ]
+}
+```
+
+#### 5. **Download Document**
+
+```
+GET /upload/documents/{filename}
+```
+
+**Response**: Binary file download
+
+#### 6. **Delete Document**
+
+```
+DELETE /upload/documents/{filename}
+```
+
+**Response:**
+```json
+{
+  "message": "Document 'filename.txt' deleted successfully",
+  "filename": "filename.txt"
+}
+```
+
+#### 7. **Health Check**
 
 ```
 GET /health

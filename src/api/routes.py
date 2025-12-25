@@ -174,6 +174,29 @@ async def upload_file(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=f"File upload error: {str(e)}")
 
 
+@router_upload.get("/documents")
+async def list_documents():
+    """List all documents in the docs folder"""
+    try:
+        if not DOCS_FOLDER.exists():
+            return {"documents": []}
+        
+        documents = []
+        for file_path in DOCS_FOLDER.iterdir():
+            if file_path.is_file() and file_path.suffix.lower() in ALLOWED_EXTENSIONS:
+                documents.append({
+                    "filename": file_path.name,
+                    "file_size": file_path.stat().st_size,
+                    "created_at": file_path.stat().st_ctime,
+                    "modified_at": file_path.stat().st_mtime
+                })
+        
+        return {"documents": sorted(documents, key=lambda x: x["filename"])}
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error listing documents: {str(e)}")
+
+
 @router_upload.get("/documents/{filename}")
 async def download_document(filename: str):
     """Download a document by filename"""
@@ -202,3 +225,35 @@ async def download_document(filename: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error downloading document: {str(e)}")
+
+
+@router_upload.delete("/documents/{filename}")
+async def delete_document(filename: str):
+    """Delete a document by filename"""
+    try:
+        # Security: prevent directory traversal
+        if ".." in filename or "/" in filename or "\\" in filename:
+            raise HTTPException(status_code=400, detail="Invalid filename")
+        
+        file_path = DOCS_FOLDER / filename
+        
+        # Verify file exists and is in allowed folder
+        if not file_path.exists() or not file_path.is_file():
+            raise HTTPException(status_code=404, detail="Document not found")
+        
+        # Verify file extension is allowed
+        if file_path.suffix.lower() not in ALLOWED_EXTENSIONS:
+            raise HTTPException(status_code=400, detail="File format not allowed")
+        
+        # Delete the file
+        file_path.unlink()
+        
+        return {
+            "message": f"Document '{filename}' deleted successfully",
+            "filename": filename
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error deleting document: {str(e)}")
